@@ -1,0 +1,148 @@
+#使用代理去获取代理IP
+proxy:
+  host: 127.0.0.1
+  port: 60000
+
+# 反向代理
+## 反向代理使用代理去请求目标URL, 然后返回结果
+reverseproxy:
+  # 反代名称
+  BILIAPI:
+    # 是否启用
+    enable: true
+    # 请求代理类型
+    ## 使用 data.json 里获取到的代理类型
+    ## ALL, HTTP, HTTPS, SOCKS5
+    proxyType: ALL
+    # 请求代理更换时间秒 (0表示不使用基于时间的切换)
+    tunnelTime: 0
+    # 请求次数达到此值时切换代理 (0表示不使用基于请求次数的切换)
+    requestCount: 2
+    # 反向代理端口
+    proxyPort: 65201
+    # 反向代理URL
+    url: https://api.live.bilibili.com
+
+#配置信息
+config:
+  #监听IP
+  ip: 0.0.0.0
+  #webApi监听端口
+  port: 28080
+  #http隧道代理端口
+  httpTunnelPort: 28111
+  #socket隧道代理端口
+  socketTunnelPort: 28112
+  #隧道代理更换时间(秒)
+  tunnelTime: 60
+  #可用IP数量小于'proxyNum'时就去抓取
+  proxyNum: 30
+  #代理IP验证间隔(秒)
+  verifyTime: 1800
+  #抓取/检测状态线程数
+  threadNum: 200
+
+#ip源
+spider:
+  - name: '齐云代理'
+    #请求方式
+    method: 'GET'
+    #post传参用的请求体
+    #body: ''
+    #urls请求间隔/秒，防止频率过快被限制
+    interval: 0
+    #使用的请求头
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    #获取的地址
+    urls: 'https://www.qiyunip.com/freeProxy/1.html,https://www.qiyunip.com/freeProxy/2.html,https://www.qiyunip.com/freeProxy/3.html'
+    #获取IP的正则表达式，
+    ip: '\"IP\">(\d+?\.\d+?.\d+?\.\d+?)</td>'
+    #获取端口的正则表达式
+    port: '\"PORT\">(\d+?)</td>'
+    #是否使用代理去请求
+    proxy: false
+
+  - name: "89代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    urls: "https://www.89ip.cn/index_1.html,https://www.89ip.cn/index_2.html,https://www.89ip.cn/index_3.html"
+    ip: '<td>[\s]*?(\d+?\.\d+?.\d+?\.\d+?)[\s]*?</td>'
+    port: '<td>[\s]*?\d+?\.\d+?.\d+?\.\d+?[\s]*?</td>[\s]*?<td>[\s]*?(\d+?)[\s]*?</td>'
+    proxy: false
+
+  - name: "快代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    urls: "http://www.ip3366.net/?stype=1&page=1,http://www.ip3366.net/?stype=1&page=2,http://www.ip3366.net/?stype=3&page=1,http://www.ip3366.net/?stype=3&page=2"
+    ip: '<td>[\s]*?(\d+?\.\d+?.\d+?\.\d+?)[\s]*?</td>'
+    port: '<td>[\s]*?\d+?\.\d+?.\d+?\.\d+?[\s]*?</td>[\s]*?<td>[\s]*?(\d+?)[\s]*?</td>'
+    proxy: false
+
+
+  - name: "db代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    urls: "http://proxydb.net/?protocol=http&country=CN,http://proxydb.net/?protocol=https&country=CN,http://proxydb.net/?protocol=socks5&country=CN"
+    ip: 'href=\"/(\d+?\.\d+?.\d+?\.\d+?)/\d+?#http.{0,1}\">'
+    port: 'href=\"/\d+?\.\d+?.\d+?\.\d+?/(\d+?)#http.{0,1}\">'
+    proxy: false
+
+
+  - name: "hidemy代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    urls: "https://hidemy.name/cn/proxy-list/?maxtime=1000&type=h#list,https://hidemy.name/cn/proxy-list/?maxtime=1000&type=h&start=64#list,https://hidemy.name/cn/proxy-list/?maxtime=1000&type=h&start=128#list,https://hidemy.name/cn/proxy-list/?maxtime=5000&type=5#list,https://hidemy.name/cn/proxy-list/?maxtime=5000&type=s#list"
+    ip: '<td>(\d+?\.\d+?.\d+?\.\d+?)</td><td>\d+</td>'
+    port: '<td>\d+?\.\d+?.\d+?\.\d+?</td><td>(\d+)</td>'
+    proxy: true
+
+  - name: "scrape代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    urls: "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=CN&ssl=all&anonymity=all"
+    ip: '(\d+?\.\d+?.\d+?\.\d+?):\d+'
+    port: '\d+?\.\d+?.\d+?\.\d+?:(\d+)'
+    anonymity: '透明'
+    proxy: true
+
+  - name: "my代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
+    urls: "https://www.my-proxy.com/free-socks-5-proxy.html,https://www.my-proxy.com/free-elite-proxy.html,https://www.my-proxy.com/free-anonymous-proxy.html"
+    ip: '>(\d+?\.\d+?.\d+?\.\d+?):\d+#'
+    port: '>\d+?\.\d+?.\d+?\.\d+?:(\d+)#'
+    proxy: true
+
+  - name: "proxy代理"
+    method: 'GET'
+    Headers:
+      User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
+    urls: "https://free-proxy-list.net/,https://www.us-proxy.org/,https://www.socks-proxy.net/"
+    ip: '(\d+?\.\d+?.\d+?\.\d+?):\d+'
+    port: '\d+?\.\d+?.\d+?\.\d+?:(\d+)'
+    proxy: true
+
+
+#通过插件，扩展ip源
+#spiderPlugin:
+#  #插件名
+#  - name: test
+#    #运行命令，返回的结果要符合格式
+#    run: 'text.exe'
+
+#通过文件导入ip
+#spiderFile:
+#  #插件名
+#  - name: test1
+#    #运行命令，返回的结果要符合格式
+#    path: 'ip.txt'
+#
+#
+

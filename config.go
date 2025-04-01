@@ -3,22 +3,25 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 var conf *Config
 
 type Config struct {
-	Spider       []Spider       `yaml:"spider" json:"spider"`
-	SpiderPlugin []SpiderPlugin `yaml:"spiderPlugin" json:"spiderPlugin"`
-	SpiderFile   []SpiderFile   `yaml:"spiderFile" json:"spiderFile"`
-	Proxy        Proxy          `yaml:"proxy" json:"proxy"`
-	Config       config         `yaml:"config" json:"config"`
+	Spider       []Spider                      `yaml:"spider" json:"spider"`
+	SpiderPlugin []SpiderPlugin                `yaml:"spiderPlugin" json:"spiderPlugin"`
+	SpiderFile   []SpiderFile                  `yaml:"spiderFile" json:"spiderFile"`
+	Proxy        Proxy                         `yaml:"proxy" json:"proxy"`
+	Config       config                        `yaml:"config" json:"config"`
+	ReverseProxy map[string]ReverseProxyConfig `yaml:"reverseproxy" json:"reverseproxy"`
 }
+
 type config struct {
 	Ip               string `yaml:"ip" json:"ip"`
 	Port             string `yaml:"port" json:"port"`
@@ -28,7 +31,9 @@ type config struct {
 	ProxyNum         int    `yaml:"proxyNum" json:"proxyNum"`
 	VerifyTime       int    `yaml:"verifyTime" json:"verifyTime"`
 	ThreadNum        int    `yaml:"threadNum" json:"threadNum"`
+	Debug            bool   `yaml:"debug" json:"debug"`
 }
+
 type Spider struct {
 	Name     string            `yaml:"name" json:"name"`
 	Method   string            `yaml:"method" json:"method"`
@@ -40,10 +45,12 @@ type Spider struct {
 	Ip       string            `yaml:"ip" json:"ip"`
 	Port     string            `yaml:"port" json:"port"`
 }
+
 type SpiderPlugin struct {
 	Name string `yaml:"name" json:"name"`
 	Run  string `yaml:"run" json:"run"`
 }
+
 type SpiderFile struct {
 	Name string `yaml:"name" json:"name"`
 	Path string `yaml:"path" json:"path"`
@@ -53,6 +60,7 @@ type Proxy struct {
 	Host string `yaml:"host" json:"host"`
 	Port string `yaml:"port" json:"port"`
 }
+
 type ProxyIp struct {
 	Ip         string //IP地址
 	Port       string //代理端口
@@ -92,21 +100,18 @@ func GetConfigData() {
 	yamlFile, err := os.ReadFile("config.yml")
 	if err != nil {
 		log.Println("配置文件打开错误：" + err.Error())
-		err.Error()
 		return
 	}
 	//将配置文件读取到结构体中
 	err = yaml.Unmarshal(yamlFile, &conf)
 	if err != nil {
 		log.Println("配置文件解析错误：" + err.Error())
-		err.Error()
 		return
 	}
 	//导入代理缓存
 	file, err := os.OpenFile("data.json", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		log.Println("代理json文件打开错误：" + err.Error())
-		err.Error()
 		return
 	}
 	defer file.Close()
@@ -166,4 +171,14 @@ func export() {
 	if err != nil {
 		log.Println("代理json保存失败:", err)
 	}
+}
+
+// 反向代理配置
+type ReverseProxyConfig struct {
+	Enable       bool   `yaml:"enable" json:"enable"`
+	ProxyType    string `yaml:"proxyType" json:"proxyType"`
+	TunnelTime   int    `yaml:"tunnelTime" json:"tunnelTime"`
+	RequestCount int    `yaml:"requestCount" json:"requestCount"`
+	ProxyPort    string `yaml:"proxyPort" json:"proxyPort"`
+	URL          string `yaml:"url" json:"url"`
 }

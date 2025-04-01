@@ -4,14 +4,14 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
+
+	"golang.org/x/net/proxy"
 )
 
 var verifyIS = false
@@ -32,7 +32,6 @@ func countDel() {
 	fmt.Printf("\r代理验证中: %d     ", count)
 	count--
 	mux2.Unlock()
-
 }
 func Verify(pi *ProxyIp, wg *sync.WaitGroup, ch chan int, first bool) {
 	defer func() {
@@ -40,23 +39,29 @@ func Verify(pi *ProxyIp, wg *sync.WaitGroup, ch chan int, first bool) {
 		countDel()
 		<-ch
 	}()
+
 	pr := pi.Ip + ":" + pi.Port
+	logDebug("开始验证代理: %s", pr)
+
 	//是抓取验证，还是验证代理池内IP
 	startT := time.Now()
 	if first {
 		if VerifyHttps(pr) {
 			pi.Type = "HTTPS"
+			logDebug("代理 %s 验证为HTTPS类型", pr)
 		} else if VerifyHttp(pr) {
 			pi.Type = "HTTP"
-
+			logDebug("代理 %s 验证为HTTP类型", pr)
 		} else if VerifySocket5(pr) {
 			pi.Type = "SOCKET5"
+			logDebug("代理 %s 验证为SOCKET5类型", pr)
 		} else {
+			logDebug("代理 %s 验证失败", pr)
 			return
 		}
 		tc := time.Since(startT)
 		pi.Time = time.Now().Format("2006-01-02 15:04:05")
-		pi.Speed = fmt.Sprintf("%s", tc)
+		pi.Speed = tc.String()
 		anonymity := Anonymity(pi, 0)
 		if anonymity == "" {
 			return
@@ -79,7 +84,7 @@ func Verify(pi *ProxyIp, wg *sync.WaitGroup, ch chan int, first bool) {
 		}
 		tc := time.Since(startT)
 		pi.Time = time.Now().Format("2006-01-02 15:04:05")
-		pi.Speed = fmt.Sprintf("%s", tc)
+		pi.Speed = tc.String()
 		return
 	}
 	tr := http.Transport{
@@ -131,56 +136,97 @@ func VerifyHttp(pr string) bool {
 	}
 	tr.Proxy = http.ProxyURL(proxyUrl)
 	client := http.Client{Timeout: 10 * time.Second, Transport: &tr}
-	request, err := http.NewRequest("GET", "http://baidu.com", nil)
-	//处理返回结果
+
+	// 使用B站API进行验证
+	request, _ := http.NewRequest("GET", "https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo?protocol=1&format=1&codec=0&room_id=3", nil)
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+
+	// 处理返回结果
 	res, err := client.Do(request)
 	if err != nil {
 		return false
 	}
 	defer res.Body.Close()
-	dataBytes, _ := io.ReadAll(res.Body)
-	result := string(dataBytes)
-	if strings.Contains(result, "0;url=http://www.baidu.com") {
-		return true
-	}
-	return false
-}
-func VerifyHttps(pr string) bool {
-	destConn, err := net.DialTimeout("tcp", pr, 10*time.Second)
+
+	// 读取响应内容
+	dataBytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		return false
 	}
-	defer destConn.Close()
-	req := []byte{67, 79, 78, 78, 69, 67, 84, 32, 119, 119, 119, 46, 98, 97, 105, 100, 117, 46, 99, 111, 109, 58, 52, 52, 51, 32, 72, 84, 84, 80, 47, 49, 46, 49, 13, 10, 72, 111, 115, 116, 58, 32, 119, 119, 119, 46, 98, 97, 105, 100, 117, 46, 99, 111, 109, 58, 52, 52, 51, 13, 10, 85, 115, 101, 114, 45, 65, 103, 101, 110, 116, 58, 32, 71, 111, 45, 104, 116, 116, 112, 45, 99, 108, 105, 101, 110, 116, 47, 49, 46, 49, 13, 10, 13, 10}
-	destConn.Write(req)
-	bytes := make([]byte, 1024)
-	destConn.SetReadDeadline(time.Now().Add(10 * time.Second))
-	read, err := destConn.Read(bytes)
-	if strings.Contains(string(bytes[:read]), "200 Connection established") {
-		return true
+
+	// 验证响应内容是否包含预期的数据
+	result := string(dataBytes)
+	return strings.Contains(result, `"room_id": 23058`) || strings.Contains(result, `"room_id":23058`)
+}
+func VerifyHttps(pr string) bool {
+	proxyUrl, proxyErr := url.Parse("http://" + pr)
+	if proxyErr != nil {
+		return false
 	}
-	return false
+	tr := http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	tr.Proxy = http.ProxyURL(proxyUrl)
+	client := http.Client{Timeout: 10 * time.Second, Transport: &tr}
+
+	// 使用B站API进行验证
+	request, _ := http.NewRequest("GET", "https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo?protocol=1&format=1&codec=0&room_id=3", nil)
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+
+	// 处理返回结果
+	res, err := client.Do(request)
+	if err != nil {
+		return false
+	}
+	defer res.Body.Close()
+
+	// 读取响应内容
+	dataBytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return false
+	}
+
+	// 验证响应内容是否包含预期的数据
+	result := string(dataBytes)
+	return strings.Contains(result, `"room_id": 23058`) || strings.Contains(result, `"room_id":23058`)
 }
 
 func VerifySocket5(pr string) bool {
-	destConn, err := net.DialTimeout("tcp", pr, 10*time.Second)
+	// 首先验证SOCKS5代理连接是否可用
+	dialer, err := proxy.SOCKS5("tcp", pr, nil, proxy.Direct)
 	if err != nil {
 		return false
 	}
-	defer destConn.Close()
-	req := []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
-	destConn.Write(req)
-	bytes := make([]byte, 1024)
-	destConn.SetReadDeadline(time.Now().Add(10 * time.Second))
-	_, err = destConn.Read(bytes)
-	if err != nil {
-		return false
-	}
-	if bytes[0] == 5 && bytes[1] == 255 {
-		return true
-	}
-	return false
 
+	// 创建一个使用SOCKS5代理的HTTP客户端
+	httpClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			Dial:            dialer.Dial,
+		},
+		Timeout: 10 * time.Second,
+	}
+
+	// 使用B站API进行验证
+	request, _ := http.NewRequest("GET", "https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo?protocol=1&format=1&codec=0&room_id=3", nil)
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+
+	// 处理返回结果
+	res, err := httpClient.Do(request)
+	if err != nil {
+		return false
+	}
+	defer res.Body.Close()
+
+	// 读取响应内容
+	dataBytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return false
+	}
+
+	// 验证响应内容是否包含预期的数据
+	result := string(dataBytes)
+	return strings.Contains(result, `"room_id": 23058`) || strings.Contains(result, `"room_id":23058`)
 }
 func Anonymity(pr *ProxyIp, c int) string {
 	c++
@@ -204,6 +250,12 @@ func Anonymity(pr *ProxyIp, c int) string {
 	client := http.Client{Timeout: 15 * time.Second, Transport: &tr}
 	tr.Proxy = http.ProxyURL(proxyUrl)
 	request, err := http.NewRequest("GET", host, nil)
+	if err != nil {
+		if c >= 3 {
+			return ""
+		}
+		return Anonymity(pr, c)
+	}
 	request.Header.Add("Proxy-Connection", "keep-alive")
 	//处理返回结果
 	res, err := client.Do(request)
@@ -223,7 +275,7 @@ func Anonymity(pr *ProxyIp, c int) string {
 		c++
 		return Anonymity(pr, c)
 	}
-	origin := regexp.MustCompile("(\\d+?\\.\\d+?.\\d+?\\.\\d+?,.+\\d+?\\.\\d+?.\\d+?\\.\\d+?)").FindAllStringSubmatch(result, -1)
+	origin := regexp.MustCompile(`(\d+?\.\d+?.\d+?\.\d+?,.+\d+?\.\d+?.\d+?\.\d+?)`).FindAllStringSubmatch(result, -1)
 	if len(origin) != 0 {
 		return "透明"
 	}
@@ -247,13 +299,13 @@ func PIAdd(pi *ProxyIp) {
 
 func VerifyProxy() {
 	if run {
-		log.Println("代理抓取中, 无法进行代理验证")
+		logWarning("代理抓取中, 无法进行代理验证")
 		return
 	}
 	verifyIS = true
 
-	log.Printf("开始验证代理存活情况, 验证次数是当前代理数的5倍: %d\n", len(ProxyPool)*5)
-	for i, _ := range ProxyPool {
+	logInfo("开始验证代理存活情况, 验证次数是当前代理数的5倍: %d", len(ProxyPool)*5)
+	for i := range ProxyPool {
 		ProxyPool[i].RequestNum = 0
 		ProxyPool[i].SuccessNum = 0
 	}
@@ -278,7 +330,7 @@ func VerifyProxy() {
 	ProxyPool = pp
 	export()
 	lock.Unlock()
-	log.Printf("\r%s 代理验证结束, 当前可用IP数: %d\n", time.Now().Format("2006-01-02 15:04:05"), len(ProxyPool))
+	logInfo("代理验证结束, 当前可用IP数: %d", len(ProxyPool))
 	verifyIS = false
 }
 

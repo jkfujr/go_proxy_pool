@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"crypto/tls"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -26,115 +24,49 @@ func httpSRunTunnelProxyServer() {
 	httpsIp = getHttpsIp()
 	httpIp = gethttpIp()
 
-	log.Println("HTTP 隧道代理启动 - 监听IP端口 -> ", conf.Config.Ip+":"+conf.Config.HttpTunnelPort)
+	logInfo("HTTP 隧道代理启动 - 监听IP端口 -> %s", conf.Config.Ip+":"+conf.Config.HttpTunnelPort)
 
 	server := &http.Server{
 		Addr:      conf.Config.Ip + ":" + conf.Config.HttpTunnelPort,
 		TLSConfig: &tls.Config{InsecureSkipVerify: true},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			if r.Method == http.MethodConnect {
-				log.Printf("隧道代理 | HTTPS 请求：%s 使用代理: %s", r.URL.String(), httpsIp)
-				destConn, err := net.DialTimeout("tcp", httpsIp, 20*time.Second)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusServiceUnavailable)
-					return
-				}
-				destConn.SetReadDeadline(time.Now().Add(20 * time.Second))
-				var req []byte
-				req = MergeArray([]byte(fmt.Sprintf("%s %s %s%s", r.Method, r.Host, r.Proto, []byte{13, 10})), []byte(fmt.Sprintf("Host: %s%s", r.Host, []byte{13, 10})))
-				for k, v := range r.Header {
-					req = MergeArray(req, []byte(fmt.Sprintf(
-						"%s: %s%s", k, v[0], []byte{13, 10})))
-				}
-				req = MergeArray(req, []byte{13, 10})
-				io.ReadAll(r.Body)
-				all, err := io.ReadAll(r.Body)
-				if err == nil {
-					req = MergeArray(req, all)
-				}
-				destConn.Write(req)
-				w.WriteHeader(http.StatusOK)
-				hijacker, ok := w.(http.Hijacker)
-				if !ok {
-					http.Error(w, "not supported", http.StatusInternalServerError)
-					return
-				}
-				clientConn, _, err := hijacker.Hijack()
-				if err != nil {
-					return
-				}
-				clientConn.SetReadDeadline(time.Now().Add(20 * time.Second))
-				destConn.Read(make([]byte, 1024)) //先读取一次
-				go io.Copy(destConn, clientConn)
-				go io.Copy(clientConn, destConn)
-
+				handleTunneling(w, r)
 			} else {
-				log.Printf("隧道代理 | HTTP 请求：%s 使用代理: %s", r.URL.String(), httpIp)
-				tr := &http.Transport{
-					TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-				}
-				//配置代理
-				proxyUrl, parseErr := url.Parse("http://" + httpIp)
-				if parseErr != nil {
-					return
-				}
-				tr.Proxy = http.ProxyURL(proxyUrl)
-				client := &http.Client{Timeout: 20 * time.Second, Transport: tr}
-				request, err := http.NewRequest(r.Method, "", r.Body)
-				//增加header选项
-				request.URL = r.URL
-				request.Header = r.Header
-				//处理返回结果
-				res, err := client.Do(request)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusServiceUnavailable)
-					return
-				}
-				defer res.Body.Close()
-
-				for k, vv := range res.Header {
-					for _, v := range vv {
-						w.Header().Add(k, v)
-					}
-				}
-				var bodyBytes []byte
-				bodyBytes, _ = io.ReadAll(res.Body)
-				res.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-				w.WriteHeader(res.StatusCode)
-				io.Copy(w, res.Body)
-				res.Body.Close()
-
+				handleHTTP(w, r)
 			}
 		}),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
 	}
 	err := server.ListenAndServe()
 	if err != nil {
-		panic(err)
+		logError("HTTP 隧道代理启动失败: %v", err)
 	}
 }
 
 func socket5RunTunnelProxyServer() {
 	socket5Ip = getSocket5Ip()
-	log.Println("SOCKET5 隧道代理启动 - 监听IP端口 -> ", conf.Config.Ip+":"+conf.Config.SocketTunnelPort)
+	logInfo("SOCKS5 隧道代理启动 - 监听IP端口 -> %s", conf.Config.Ip+":"+conf.Config.SocketTunnelPort)
 	li, err := net.Listen("tcp", conf.Config.Ip+":"+conf.Config.SocketTunnelPort)
 	if err != nil {
-		log.Println(err)
+		logError("SOCKET5 隧道代理启动失败: %v", err)
 	}
 	for {
 		clientConn, err := li.Accept()
 		if err != nil {
-			log.Panic(err)
+			logError("SOCKET5 隧道代理接受连接失败: %v", err)
 		}
 		go func() {
-			log.Printf("隧道代理 | SOCKET5 请求 使用代理: %s", socket5Ip)
+			logInfo("隧道代理 | SOCKET5 请求 使用代理: %s", socket5Ip)
 			if clientConn == nil {
 				return
 			}
 			defer clientConn.Close()
 			destConn, err := net.DialTimeout("tcp", socket5Ip, 30*time.Second)
 			if err != nil {
-				log.Println(err)
+				logError("SOCKET5 隧道代理连接到代理失败: %v", err)
 				return
 			}
 			defer destConn.Close()
@@ -143,7 +75,6 @@ func socket5RunTunnelProxyServer() {
 			io.Copy(clientConn, destConn)
 		}()
 	}
-
 }
 
 // MergeArray 合并数组
@@ -240,4 +171,142 @@ func getSocket5Ip() string {
 	}
 	socket5 = make([]ProxyIp, 0)
 	return addr
+}
+
+// 添加隧道代理日志函数
+func logTunnelInfo(tunnelType string, format string, v ...interface{}) {
+	mainLogger.Output(2, logFormat("TUNNEL", fmt.Sprintf("[%s] %s", tunnelType, fmt.Sprintf(format, v...))))
+}
+
+func logTunnelError(tunnelType string, format string, v ...interface{}) {
+	mainErrorLogger.Output(2, logFormat("TUNNEL", fmt.Sprintf("[%s] %s", tunnelType, fmt.Sprintf(format, v...))))
+}
+
+// 处理 HTTPS 隧道连接
+func handleTunneling(w http.ResponseWriter, r *http.Request) {
+	logTunnelInfo("HTTPS", "请求：%s 使用代理: %s", r.URL.String(), httpsIp)
+
+	// 连接到目标代理服务器
+	destConn, err := net.DialTimeout("tcp", httpsIp, 20*time.Second)
+	if err != nil {
+		logTunnelError("HTTPS", "连接代理失败: %v", err)
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+
+	// 设置读取超时
+	destConn.SetReadDeadline(time.Now().Add(20 * time.Second))
+
+	// 构建请求
+	var req []byte
+	req = MergeArray([]byte(fmt.Sprintf("%s %s %s%s", r.Method, r.Host, r.Proto, []byte{13, 10})), []byte(fmt.Sprintf("Host: %s%s", r.Host, []byte{13, 10})))
+
+	// 添加请求头
+	for k, v := range r.Header {
+		req = MergeArray(req, []byte(fmt.Sprintf(
+			"%s: %s%s", k, v[0], []byte{13, 10})))
+	}
+
+	// 添加空行，表示头部结束
+	req = MergeArray(req, []byte{13, 10})
+
+	// 读取请求体
+	body, err := io.ReadAll(r.Body)
+	if err == nil && len(body) > 0 {
+		req = MergeArray(req, body)
+	}
+
+	// 发送请求到代理服务器
+	destConn.Write(req)
+
+	// 设置响应状态码
+	w.WriteHeader(http.StatusOK)
+
+	// 获取底层连接
+	hijacker, ok := w.(http.Hijacker)
+	if !ok {
+		logTunnelError("HTTPS", "不支持 Hijacker 接口")
+		http.Error(w, "不支持隧道连接", http.StatusInternalServerError)
+		return
+	}
+
+	// 接管连接
+	clientConn, _, err := hijacker.Hijack()
+	if err != nil {
+		logTunnelError("HTTPS", "Hijack 失败: %v", err)
+		return
+	}
+
+	// 设置客户端连接超时
+	clientConn.SetReadDeadline(time.Now().Add(20 * time.Second))
+
+	// 先读取一次，清空缓冲区
+	destConn.Read(make([]byte, 1024))
+
+	// 双向转发数据
+	go io.Copy(destConn, clientConn)
+	go io.Copy(clientConn, destConn)
+}
+
+// 处理普通 HTTP 请求
+func handleHTTP(w http.ResponseWriter, r *http.Request) {
+	logTunnelInfo("HTTP", "请求：%s 使用代理: %s", r.URL.String(), httpIp)
+
+	// 创建 HTTP 客户端
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	// 配置代理
+	proxyUrl, parseErr := url.Parse("http://" + httpIp)
+	if parseErr != nil {
+		logTunnelError("HTTP", "解析代理URL失败: %v", parseErr)
+		http.Error(w, "代理配置错误", http.StatusInternalServerError)
+		return
+	}
+	tr.Proxy = http.ProxyURL(proxyUrl)
+
+	// 创建客户端
+	client := &http.Client{Timeout: 20 * time.Second, Transport: tr}
+
+	// 创建新请求
+	request, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+	if err != nil {
+		logTunnelError("HTTP", "创建请求失败: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// 复制请求头
+	request.Header = r.Header
+
+	// 发送请求
+	res, err := client.Do(request)
+	if err != nil {
+		logTunnelError("HTTP", "请求失败: %v", err)
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	defer res.Body.Close()
+
+	// 复制响应头
+	for k, vv := range res.Header {
+		for _, v := range vv {
+			w.Header().Add(k, v)
+		}
+	}
+
+	// 读取响应体
+	bodyBytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		logTunnelError("HTTP", "读取响应体失败: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// 设置响应状态码
+	w.WriteHeader(res.StatusCode)
+
+	// 写入响应体
+	w.Write(bodyBytes)
 }

@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"log"
 	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Home struct {
@@ -22,6 +23,43 @@ var record []ProxyIp
 func Run() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+
+	// 设置Gin的日志输出到我们的日志系统
+	r.Use(func(c *gin.Context) {
+		// 开始时间
+		startTime := time.Now()
+
+		// 处理请求
+		c.Next()
+
+		// 结束时间
+		endTime := time.Now()
+
+		// 执行时间
+		latencyTime := endTime.Sub(startTime)
+
+		// 请求方式
+		reqMethod := c.Request.Method
+
+		// 请求路由
+		reqUri := c.Request.RequestURI
+
+		// 状态码
+		statusCode := c.Writer.Status()
+
+		// 请求IP
+		clientIP := c.ClientIP()
+
+		// 日志格式
+		logInfo("API请求 | %3d | %13v | %15s | %s | %s",
+			statusCode,
+			latencyTime,
+			clientIP,
+			reqMethod,
+			reqUri,
+		)
+	})
+
 	//首页
 	r.GET("/", index)
 
@@ -40,10 +78,13 @@ func Run() {
 	//更换隧道代理IP
 	r.GET("/tunnelUpdate", tunnelUpdate)
 
-	log.Printf("webApi启动 - 监听IP端口 -> %s\n", conf.Config.Ip+":"+conf.Config.Port)
-	r.Run(conf.Config.Ip + ":" + conf.Config.Port)
+	// 添加调试模式控制API
+	r.GET("/api/debug", toggleDebug)
 
+	logInfo("Web API服务器启动 - 监听IP端口 -> %s", conf.Config.Ip+":"+conf.Config.Port)
+	r.Run(conf.Config.Ip + ":" + conf.Config.Port)
 }
+
 func index(c *gin.Context) {
 	home := Home{Sum: len(ProxyPool), Type: make(map[string]int), Anonymity: make(map[string]int), Country: make(map[string]int), Source: make(map[string]int), TunnelProxy: make(map[string]string)}
 	for i := range ProxyPool {
@@ -59,9 +100,10 @@ func index(c *gin.Context) {
 	jsonStr := string(jsonByte)
 	c.String(200, jsonStr)
 }
+
 func get(c *gin.Context) {
 	if len(ProxyPool) == 0 {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"代理池是空的\"}"))
+		c.String(200, `{"code": 200, "msg": "代理池是空的"}`)
 		return
 	}
 	var prs []ProxyIp
@@ -100,53 +142,55 @@ func get(c *gin.Context) {
 	} else {
 		count, err := strconv.Atoi(co)
 		if err != nil {
-			c.String(500, fmt.Sprintf("{\"code\": 500, \"msg\": \"错误\"}"))
+			c.String(500, `{"code": 500, "msg": "错误"}`)
 		}
 		jsonByte, _ = json.Marshal(prs[:count])
 	}
 	jsonStr := string(jsonByte)
 	c.String(200, jsonStr)
 }
+
 func delete(c *gin.Context) {
 	if len(ProxyPool) == 0 {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"代理池是空的\"}"))
+		c.String(200, `{"code": 200, "msg": "代理池是空的"}`)
 		return
 	}
 	ip := c.Query("ip")
 	port := c.Query("port")
 	i := delIp(ip + ":" + port)
-	c.String(200, fmt.Sprintf("{\"code\": 200, \"count\": %d}", i))
+	c.String(200, fmt.Sprintf(`{"code": 200, "count": %d}`, i))
 }
+
 func verify(c *gin.Context) {
 	if verifyIS {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"验证中\"}"))
+		c.String(200, `{"code": 200, "msg": "验证中"}`)
 	} else if run {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"代理抓取中，请稍后再来验证\"}"))
+		c.String(200, `{"code": 200, "msg": "代理抓取中，请稍后再来验证"}`)
 	} else {
 		go VerifyProxy()
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"开始验证代理\"}"))
+		c.String(200, `{"code": 200, "msg": "开始验证代理"}`)
 	}
 }
 
 func spiderUp(c *gin.Context) {
 	if run {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"抓取中\"}"))
+		c.String(200, `{"code": 200, "msg": "抓取中"}`)
 	} else if verifyIS {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"代理验证中，请稍后再来抓取\"}"))
+		c.String(200, `{"code": 200, "msg": "代理验证中，请稍后再来抓取"}`)
 	} else {
 		go spiderRun()
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"开始抓取代理IP\"}"))
+		c.String(200, `{"code": 200, "msg": "开始抓取代理IP"}`)
 	}
 }
 
 func tunnelUpdate(c *gin.Context) {
 	if len(ProxyPool) == 0 {
-		c.String(200, fmt.Sprintf("{\"code\": 200, \"msg\": \"代理池是空的\"}"))
+		c.String(200, `{"code": 200, "msg": "代理池是空的"}`)
 	}
 	httpsIp = getHttpsIp()
 	httpIp = gethttpIp()
 	socket5Ip = getSocket5Ip()
-	c.String(200, fmt.Sprintf("{\"code\": 200, \"HTTP\": \"%s\",\"HTTPS\": \"%s\",\"SOCKET5\": \"%s\" }", httpIp, httpsIp, socket5Ip))
+	c.String(200, fmt.Sprintf(`{"code": 200, "HTTP": "%s", "HTTPS": "%s", "SOCKET5": "%s"}`, httpIp, httpsIp, socket5Ip))
 }
 
 func delIp(addr string) int {
@@ -164,4 +208,27 @@ func delIp(addr string) int {
 		}
 	}
 	return in
+}
+
+// 切换调试模式
+func toggleDebug(c *gin.Context) {
+	enable := c.Query("enable")
+
+	if enable == "true" {
+		SetLogLevel(LogLevelDebug)
+		conf.Config.Debug = true
+		logDebug("调试模式已启用")
+		c.JSON(200, gin.H{"code": 200, "msg": "调试模式已启用"})
+	} else if enable == "false" {
+		conf.Config.Debug = false
+		SetLogLevel(LogLevelInfo)
+		logInfo("调试模式已禁用")
+		c.JSON(200, gin.H{"code": 200, "msg": "调试模式已禁用"})
+	} else {
+		status := "禁用"
+		if conf.Config.Debug {
+			status = "启用"
+		}
+		c.JSON(200, gin.H{"code": 200, "msg": fmt.Sprintf("当前调试模式状态: %s", status)})
+	}
 }

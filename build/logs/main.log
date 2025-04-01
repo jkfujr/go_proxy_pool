@@ -1,0 +1,326 @@
+2025/04/02 04:08:12 [INFO] 代理池服务启动中...
+2025/04/02 04:08:12 [INFO] 成功加载 74 个代理
+2025/04/02 04:08:12 [INFO] HTTP 隧道代理启动 - 监听IP端口 -> 0.0.0.0:28111
+2025/04/02 04:08:12 [INFO] SOCKS5 隧道代理启动 - 监听IP端口 -> 0.0.0.0:28112
+2025/04/02 04:08:12 [INFO][反代][BILIAPI] 更新代理IP:  -> 27.189.135.87:8089
+[INFO][反代][BILIAPI] 反向代理启动 - 监听端口: 65201, 目标URL: https://api.live.bilibili.com
+2025/04/02 04:08:12 [INFO] Web API服务器启动 - 监听IP端口 -> 0.0.0.0:28080
+http: panic serving 127.0.0.1:56388: runtime error: invalid memory address or nil pointer dereference
+goroutine 82 [running]:
+net/http.(*conn).serve.func1()
+	C:/Program Files/Go/src/net/http/server.go:1947 +0xbe
+panic({0xbf3960?, 0xfe6990?})
+	C:/Program Files/Go/src/runtime/panic.go:785 +0x132
+log.(*Logger).output(0xc00000a0c0?, 0xf?, 0xc00040c2c8?, 0x7?)
+	C:/Program Files/Go/src/log/log.go:203 +0x34
+log.(*Logger).Printf(...)
+	C:/Program Files/Go/src/log/log.go:268
+main.startReverseProxyServer.func4({0xd37910, 0xc0001702a0}, 0xc00011a140, {0xd34160, 0xfe6a00})
+	F:/Code/code/jk/go_proxy_pool/reverseProxy.go:179 +0x205
+net/http/httputil.(*ReverseProxy).ServeHTTP(0xc00016e460, {0xd37910, 0xc0001702a0}, 0xc00041a000)
+	C:/Program Files/Go/src/net/http/httputil/reverseproxy.go:486 +0x103f
+net/http.serverHandler.ServeHTTP({0xc00002a240?}, {0xd37910?, 0xc0001702a0?}, 0x6?)
+	C:/Program Files/Go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc00026a000, {0xd38358, 0xc00010aa80})
+	C:/Program Files/Go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 70
+	C:/Program Files/Go/src/net/http/server.go:3360 +0x485
+http: panic serving 127.0.0.1:56389: runtime error: invalid memory address or nil pointer dereference
+goroutine 5 [running]:
+net/http.(*conn).serve.func1()
+	C:/Program Files/Go/src/net/http/server.go:1947 +0xbe
+panic({0xbf3960?, 0xfe6990?})
+	C:/Program Files/Go/src/runtime/panic.go:785 +0x132
+log.(*Logger).output(0xc00000a0e0?, 0xf?, 0xc00040c2c8?, 0x7?)
+	C:/Program Files/Go/src/log/log.go:203 +0x34
+log.(*Logger).Printf(...)
+	C:/Program Files/Go/src/log/log.go:268
+main.startReverseProxyServer.func4({0xd37910, 0xc000170380}, 0xc00011a3c0, {0xd34560, 0xc00016e870})
+	F:/Code/code/jk/go_proxy_pool/reverseProxy.go:179 +0x205
+net/http/httputil.(*ReverseProxy).ServeHTTP(0xc00016e460, {0xd37910, 0xc000170380}, 0xc00041a140)
+	C:/Program Files/Go/src/net/http/httputil/reverseproxy.go:486 +0x103f
+net/http.serverHandler.ServeHTTP({0xc00002a2d0?}, {0xd37910?, 0xc000170380?}, 0x6?)
+	C:/Program Files/Go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc0000be120, {0xd38358, 0xc00010aa80})
+	C:/Program Files/Go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 70
+	C:/Program Files/Go/src/net/http/server.go:3360 +0x485
+http: panic serving 127.0.0.1:56396: runtime error: invalid memory address or nil pointer dereference
+goroutine 8 [running]:
+net/http.(*conn).serve.func1()
+	C:/Program Files/Go/src/net/http/server.go:1947 +0xbe
+panic({0xbf3960?, 0xfe6990?})
+	C:/Program Files/Go/src/runtime/panic.go:785 +0x132
+log.(*Logger).output(0xc00022a380?, 0xf?, 0xc00040c2c8?, 0x7?)
+	C:/Program Files/Go/src/log/log.go:203 +0x34
+log.(*Logger).Printf(...)
+	C:/Program Files/Go/src/log/log.go:268
+main.startReverseProxyServer.func4({0xd37910, 0xc000170460}, 0xc00011ab40, {0xd34560, 0xc00016eaa0})
+	F:/Code/code/jk/go_proxy_pool/reverseProxy.go:179 +0x205
+net/http/httputil.(*ReverseProxy).ServeHTTP(0xc00016e460, {0xd37910, 0xc000170460}, 0xc00022c000)
+	C:/Program Files/Go/src/net/http/httputil/reverseproxy.go:486 +0x103f
+net/http.serverHandler.ServeHTTP({0xc0001b4480?}, {0xd37910?, 0xc000170460?}, 0x6?)
+	C:/Program Files/Go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc0000be630, {0xd38358, 0xc00010aa80})
+	C:/Program Files/Go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 70
+	C:/Program Files/Go/src/net/http/server.go:3360 +0x485
+2025/04/02 04:10:08 [INFO] 代理池服务启动中...
+2025/04/02 04:10:08 [INFO] 成功加载 74 个代理
+2025/04/02 04:10:08 [INFO] SOCKS5 隧道代理启动 - 监听IP端口 -> 0.0.0.0:28112
+2025/04/02 04:10:08 [INFO] HTTP 隧道代理启动 - 监听IP端口 -> 0.0.0.0:28111
+2025/04/02 04:10:08 [INFO][反代][BILIAPI] 更新代理IP:  -> 27.189.135.87:8089
+[INFO][反代][BILIAPI] 反向代理启动 - 监听端口: 65201, 目标URL: https://api.live.bilibili.com
+2025/04/02 04:10:08 [INFO] Web API服务器启动 - 监听IP端口 -> 0.0.0.0:28080
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 27.189.135.87:8089
+从代理池中删除代理: 27.189.135.87:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:10:14 [INFO][反代][BILIAPI] 更新代理IP: 27.189.135.87:8089 -> 27.189.129.156:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 27.189.129.156:8089
+从代理池中删除代理: 27.189.129.156:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:10:22 [INFO][反代][BILIAPI] 更新代理IP: 27.189.129.156:8089 -> 27.189.132.31:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 27.189.132.31:8089
+从代理池中删除代理: 27.189.132.31:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:10:29 [INFO][反代][BILIAPI] 更新代理IP: 27.189.132.31:8089 -> 27.189.135.228:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 27.189.135.228:8089
+从代理池中删除代理: 27.189.135.228:8089
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:10:35 [INFO][反代][BILIAPI] 更新代理IP: 27.189.135.228:8089 -> 111.72.196.142:2324
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 111.72.196.142:2324
+从代理池中删除代理: 111.72.196.142:2324
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:10:39 [INFO][反代][BILIAPI] 更新代理IP: 111.72.196.142:2324 -> 61.143.2.14:8118
+2025/04/02 04:10:53 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:53 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:55 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:55 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:56 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:57 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:57 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:10:57 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:11:02 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:11:02 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:11:03 [INFO] 隧道代理 | SOCKET5 请求 使用代理: 68.71.247.130:4145
+2025/04/02 04:11:03 [INFO] API请求 | 200 |         504µs |       127.0.0.1 | GET | /
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 61.143.2.14:8118
+从代理池中删除代理: 61.143.2.14:8118
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:11:06 [INFO][反代][BILIAPI] 更新代理IP: 61.143.2.14:8118 -> 43.135.177.23:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.135.177.23:13001
+从代理池中删除代理: 43.135.177.23:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:11:15 [INFO][反代][BILIAPI] 更新代理IP: 43.135.177.23:13001 -> 43.130.62.137:13001
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:30 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:32 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:11:32 [INFO][反代][BILIAPI] 更新代理IP: 43.130.62.137:13001 -> 43.153.16.223:13001
+2025/04/02 04:11:36 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:37 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:40 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:11:40 [INFO][反代][BILIAPI] 更新代理IP: 43.153.16.223:13001 -> 43.130.2.57:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.130.2.57:13001
+从代理池中删除代理: 43.130.2.57:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:11:42 [INFO][反代][BILIAPI] 更新代理IP: 43.130.2.57:13001 -> 43.135.149.15:13001
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:47 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+2025/04/02 04:11:49 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:11:59 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:11:59 [INFO][反代][BILIAPI] 更新代理IP: 43.135.149.15:13001 -> 43.130.0.130:13001
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:02 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:06 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:12:06 [INFO][反代][BILIAPI] 更新代理IP: 43.130.0.130:13001 -> 43.130.48.100:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.130.48.100:13001
+从代理池中删除代理: 43.130.48.100:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:12:09 [INFO][反代][BILIAPI] 更新代理IP: 43.130.48.100:13001 -> 170.106.64.217:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 170.106.64.217:13001
+从代理池中删除代理: 170.106.64.217:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:12:12 [INFO][反代][BILIAPI] 更新代理IP: 170.106.64.217:13001 -> 43.153.4.199:13001
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:15 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+2025/04/02 04:12:17 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:20 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:12:20 [INFO][反代][BILIAPI] 更新代理IP: 43.153.4.199:13001 -> 43.153.48.105:13001
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:26 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55713 - [02/Apr/2025:04:12:28 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:12:28 [INFO][反代][BILIAPI] 更新代理IP: 43.153.48.105:13001 -> 43.135.164.2:13001
+2025/04/02 04:40:08 [INFO] 开始定时验证代理
+2025/04/02 04:40:08 [INFO] 开始验证代理存活情况, 验证次数是当前代理数的5倍: 320
+2025/04/02 04:41:23 [INFO] 代理验证结束, 当前可用IP数: 58
+2025/04/02 04:44:09 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:54452 - [02/Apr/2025:04:44:13 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:54452 - [02/Apr/2025:04:44:14 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:44:14 [INFO][反代][BILIAPI] 更新代理IP: 43.135.164.2:13001 -> 43.159.136.60:13001
+[反代][BILIAPI] 127.0.0.1:54452 - [02/Apr/2025:04:44:17 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+2025/04/02 04:44:19 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55563 - [02/Apr/2025:04:54:43 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:54:43 [INFO][反代][BILIAPI] 更新代理IP: 43.159.136.60:13001 -> 43.153.88.171:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.88.171:13001
+从代理池中删除代理: 43.153.88.171:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:00 [INFO][反代][BILIAPI] 更新代理IP: 43.153.88.171:13001 -> 170.106.173.254:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 170.106.173.254:13001
+从代理池中删除代理: 170.106.173.254:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:20 [INFO][反代][BILIAPI] 更新代理IP: 170.106.173.254:13001 -> 43.153.77.83:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.77.83:13001
+从代理池中删除代理: 43.153.77.83:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:25 [INFO][反代][BILIAPI] 更新代理IP: 43.153.77.83:13001 -> 43.135.162.60:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.135.162.60:13001
+从代理池中删除代理: 43.135.162.60:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:28 [INFO][反代][BILIAPI] 更新代理IP: 43.135.162.60:13001 -> 43.153.27.172:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.27.172:13001
+从代理池中删除代理: 43.153.27.172:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:30 [INFO][反代][BILIAPI] 更新代理IP: 43.153.27.172:13001 -> 43.153.8.210:13001
+2025/04/02 04:55:32 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.8.210:13001
+从代理池中删除代理: 43.153.8.210:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:33 [INFO][反代][BILIAPI] 更新代理IP: 43.153.8.210:13001 -> 34.143.143.61:7777
+[反代][BILIAPI] 127.0.0.1:55564 - [02/Apr/2025:04:55:37 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55564 - [02/Apr/2025:04:55:40 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:55:40 [INFO][反代][BILIAPI] 更新代理IP: 34.143.143.61:7777 -> 43.153.78.185:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.78.185:13001
+从代理池中删除代理: 43.153.78.185:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:43 [INFO][反代][BILIAPI] 更新代理IP: 43.153.78.185:13001 -> 103.249.86.48:3128
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 103.249.86.48:3128
+从代理池中删除代理: 103.249.86.48:3128
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:55:50 [INFO][反代][BILIAPI] 更新代理IP: 103.249.86.48:3128 -> 43.153.69.199:13001
+[反代][BILIAPI] 127.0.0.1:55564 - [02/Apr/2025:04:56:00 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.69.199:13001
+从代理池中删除代理: 43.153.69.199:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:07 [INFO][反代][BILIAPI] 更新代理IP: 43.153.69.199:13001 -> 43.130.16.92:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.130.16.92:13001
+从代理池中删除代理: 43.130.16.92:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:16 [INFO][反代][BILIAPI] 更新代理IP: 43.130.16.92:13001 -> 170.106.140.154:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 170.106.140.154:13001
+从代理池中删除代理: 170.106.140.154:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:22 [INFO][反代][BILIAPI] 更新代理IP: 170.106.140.154:13001 -> 43.135.130.198:13001
+[反代][BILIAPI] 127.0.0.1:55564 - [02/Apr/2025:04:56:26 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+2025/04/02 04:56:27 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+2025/04/02 04:56:28 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55564 - [02/Apr/2025:04:56:30 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:56:30 [INFO][反代][BILIAPI] 更新代理IP: 43.135.130.198:13001 -> 15.235.10.31:28003
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 15.235.10.31:28003
+从代理池中删除代理: 15.235.10.31:28003
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:35 [INFO][反代][BILIAPI] 更新代理IP: 15.235.10.31:28003 -> 47.74.226.8:5001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 47.74.226.8:5001
+从代理池中删除代理: 47.74.226.8:5001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:38 [INFO][反代][BILIAPI] 更新代理IP: 47.74.226.8:5001 -> 43.159.129.136:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.159.129.136:13001
+从代理池中删除代理: 43.159.129.136:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:40 [INFO][反代][BILIAPI] 更新代理IP: 43.159.129.136:13001 -> 43.135.129.111:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.135.129.111:13001
+从代理池中删除代理: 43.135.129.111:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:43 [INFO][反代][BILIAPI] 更新代理IP: 43.135.129.111:13001 -> 45.140.143.77:18080
+2025/04/02 04:56:46 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 45.140.143.77:18080
+从代理池中删除代理: 45.140.143.77:18080
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:49 [INFO][反代][BILIAPI] 更新代理IP: 45.140.143.77:18080 -> 49.51.249.217:13001
+[反代][BILIAPI] 127.0.0.1:55563 - [02/Apr/2025:04:56:54 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55563 - [02/Apr/2025:04:56:57 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:56:57 [INFO][反代][BILIAPI] 更新代理IP: 49.51.249.217:13001 -> 43.153.103.45:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.103.45:13001
+从代理池中删除代理: 43.153.103.45:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:56:59 [INFO][反代][BILIAPI] 更新代理IP: 43.153.103.45:13001 -> 43.130.42.164:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.130.42.164:13001
+从代理池中删除代理: 43.130.42.164:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:57:04 [INFO][反代][BILIAPI] 更新代理IP: 43.130.42.164:13001 -> 49.51.198.134:13001
+2025/04/02 04:57:09 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:55563 - [02/Apr/2025:04:57:09 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:55563 - [02/Apr/2025:04:57:11 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:57:11 [INFO][反代][BILIAPI] 更新代理IP: 49.51.198.134:13001 -> 170.106.115.219:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 170.106.115.219:13001
+从代理池中删除代理: 170.106.115.219:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:57:13 [INFO][反代][BILIAPI] 更新代理IP: 170.106.115.219:13001 -> 43.155.196.88:9090
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.155.196.88:9090
+从代理池中删除代理: 43.155.196.88:9090
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:57:19 [INFO][反代][BILIAPI] 更新代理IP: 43.155.196.88:9090 -> 172.188.122.92:80
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:21 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:24 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:57:24 [INFO][反代][BILIAPI] 更新代理IP: 172.188.122.92:80 -> 141.95.238.126:8080
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:29 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:32 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:57:32 [INFO][反代][BILIAPI] 更新代理IP: 141.95.238.126:8080 -> 219.135.229.196:7890
+2025/04/02 04:57:41 [INFO] API请求 | 200 |            0s |       127.0.0.1 | GET | /
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:43 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:45 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:57:45 [INFO][反代][BILIAPI] 更新代理IP: 219.135.229.196:7890 -> 43.130.62.137:13001
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:47 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 1/2
+[反代][BILIAPI] 127.0.0.1:56063 - [02/Apr/2025:04:57:49 +0800] "GET /room/v1/Room/playUrl?cid=3&qn=10000&platform=web" 200 -1 "0.000s" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.61 Chrome/126.0.6478.61 Not/A)Brand/8  Safari/537.36"
+[INFO][反代][BILIAPI] 成功请求计数: 2/2
+[INFO][反代][BILIAPI] 请求次数达到 2，正在切换代理...
+2025/04/02 04:57:49 [INFO][反代][BILIAPI] 更新代理IP: 43.130.62.137:13001 -> 43.153.16.223:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.153.16.223:13001
+从代理池中删除代理: 43.153.16.223:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:57:52 [INFO][反代][BILIAPI] 更新代理IP: 43.153.16.223:13001 -> 43.135.149.15:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在从代理池中删除代理: 43.135.149.15:13001
+从代理池中删除代理: 43.135.149.15:13001
+[INFO][反代][BILIAPI] 检测到代理错误，正在切换代理...
+2025/04/02 04:57:57 [INFO][反代][BILIAPI] 更新代理IP: 43.135.149.15:13001 -> 43.130.0.130:13001

@@ -1,26 +1,49 @@
 #使用代理去获取代理IP
 proxy:
   host: 127.0.0.1
-  port: 10809
+  port: 60000
+
+# 反向代理
+## 反向代理使用代理去请求目标URL, 然后返回结果
+reverseproxy:
+  # 反代名称
+  BILIAPI:
+    # 是否启用
+    enable: true
+    # 请求代理类型
+    ## 使用 data.json 里获取到的代理类型
+    ## ALL, HTTP, HTTPS, SOCKS5
+    proxyType: ALL
+    # 请求代理更换时间秒 (0表示不使用基于时间的切换)
+    tunnelTime: 0
+    # 请求次数达到此值时切换代理 (0表示不使用基于请求次数的切换)
+    requestCount: 2
+    # 反向代理端口
+    proxyPort: 65201
+    # 反向代理URL
+    url: https://api.live.bilibili.com
+
 
 #配置信息
 config:
   #监听IP
   ip: 0.0.0.0
   #webApi监听端口
-  port: 8080
+  port: 28080
   #http隧道代理端口
-  httpTunnelPort: 8111
+  httpTunnelPort: 28111
   #socket隧道代理端口
-  socketTunnelPort: 8112
-  #隧道代理更换时间秒
+  socketTunnelPort: 28112
+  #隧道代理更换时间(秒)
   tunnelTime: 60
-  #可用IP数量小于‘proxyNum’时就去抓取
+  #可用IP数量小于'proxyNum'时就去抓取
   proxyNum: 30
-  #代理IP验证间隔秒
+  #代理IP验证间隔(秒)
   verifyTime: 1800
   #抓取/检测状态线程数
   threadNum: 200
+  #调试模式
+  debug: false
 
 #ip源
 spider:
@@ -35,7 +58,7 @@ spider:
     Headers:
       User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
     #获取的地址
-    urls: 'https://proxy.ip3366.net/free/?action=china&page=1,https://proxy.ip3366.net/free/?action=china&page=2,https://proxy.ip3366.net/free/?action=china&page=3'
+    urls: 'https://www.qiyunip.com/freeProxy/1.html,https://www.qiyunip.com/freeProxy/2.html,https://www.qiyunip.com/freeProxy/3.html'
     #获取IP的正则表达式，
     ip: '\"IP\">(\d+?\.\d+?.\d+?\.\d+?)</td>'
     #获取端口的正则表达式
@@ -52,16 +75,6 @@ spider:
     port: '<td>[\s]*?\d+?\.\d+?.\d+?\.\d+?[\s]*?</td>[\s]*?<td>[\s]*?(\d+?)[\s]*?</td>'
     proxy: false
 
-  #每天需要跟换地址
-  - name: "开心代理"
-    method: 'GET'
-    Headers:
-      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-    urls: "http://www.kxdaili.com/daili/ip/7713.html"
-    ip: '\[.+?\](\d+?\.\d+?.\d+?\.\d+?):\d+?@.+?#'
-    port: '\[.+?\]\d+?\.\d+?.\d+?\.\d+?:(\d+?)@.+?#'
-    proxy: false
-
   - name: "快代理"
     method: 'GET'
     Headers:
@@ -71,44 +84,6 @@ spider:
     port: '<td>[\s]*?\d+?\.\d+?.\d+?\.\d+?[\s]*?</td>[\s]*?<td>[\s]*?(\d+?)[\s]*?</td>'
     proxy: false
 
-  - name: "高可用代理"
-    method: 'GET'
-    Headers:
-      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-    urls: "https://ip.jiangxianli.com/?page=1"
-    ip: '<td>[\s]*?(\d+?\.\d+?.\d+?\.\d+?)[\s]*?</td>'
-    port: '<td>[\s]*?\d+?\.\d+?.\d+?\.\d+?[\s]*?</td>[\s]*?<td>[\s]*?(\d+?)[\s]*?</td>'
-    proxy: false
-
-
-  - name: "小舒代理"
-    method: 'GET'
-    Headers:
-      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-    urls: "https://xsdaili.cn/dayProxy/ip/1796.html"
-    ip: '(\d+?\.\d+?.\d+?\.\d+?):\d+?@.+?#\[.+?\]'
-    port: '\d+?\.\d+?.\d+?\.\d+?:(\d+?)@.+?#\[.+?\]'
-    proxy: false
-
-  - name: "命运零代理"
-    method: 'GET'
-    Headers:
-      User-Agent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-    urls: "http://proxylist.fatezero.org/proxy.list"
-    ip: '\"host\": \"(.+?)\"'
-    port: '\"port\": (\d+)'
-    proxy: false
-
-
-  - name: '自由代理'
-    method: 'GET'
-    Headers:
-      #需要使用cookie,不然会有验证
-      User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
-    urls: "https://www.freeproxylists.net/zh/?c=CN&u=50&page=1"
-    ip: '%3e(.{0,60}?)%3c%2f'
-    port: 'center\">(\d+?)</td><td'
-    proxy: true
 
   - name: "db代理"
     method: 'GET'

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"crypto/tls"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,56 +16,54 @@ import (
 
 var wg sync.WaitGroup
 var wg2 sync.WaitGroup
-var mux sync.Mutex
 var ch2 = make(chan int, 50)
 
 // 是否抓取中
 var run = false
 
 func spiderRun() {
-
 	run = true
 	defer func() {
 		run = false
 	}()
 
 	count = 0
-	log.Println("开始抓取代理...")
+	logInfo("开始抓取代理...")
 	for i := range conf.Spider {
 		wg2.Add(1)
 		go spider(&conf.Spider[i])
 	}
 	wg2.Wait()
-	log.Printf("\r%s 代理抓取结束           \n", time.Now().Format("2006-01-02 15:04:05"))
+	logInfo("代理抓取结束")
 
 	count = 0
-	log.Println("开始扩展抓取代理...")
+	logInfo("开始扩展抓取代理...")
 	for i := range conf.SpiderPlugin {
 		wg2.Add(1)
 		go spiderPlugin(&conf.SpiderPlugin[i])
 	}
 	wg2.Wait()
-	log.Printf("\r%s 扩展代理抓取结束         \n", time.Now().Format("2006-01-02 15:04:05"))
+	logInfo("扩展代理抓取结束")
+
 	count = 0
-	log.Println("开始文件抓取代理...")
+	logInfo("开始文件抓取代理...")
 	for i := range conf.SpiderFile {
 		wg2.Add(1)
 		go spiderFile(&conf.SpiderFile[i])
 	}
 	wg2.Wait()
-	log.Printf("\r%s 文件代理抓取结束         \n", time.Now().Format("2006-01-02 15:04:05"))
+	logInfo("文件代理抓取结束")
 
 	//导出代理到文件
 	export()
-
 }
 
 func spider(sp *Spider) {
 	defer func() {
 		wg2.Done()
-		//log.Printf("%s 结束...",sp.Name)
+		//mainLogger.Printf("%s 结束...",sp.Name)
 	}()
-	//log.Printf("%s 开始...", sp.Name)
+	//mainLogger.Printf("%s 开始...", sp.Name)
 	urls := strings.Split(sp.Urls, ",")
 	var pis []ProxyIp
 	for ui, v := range urls {
@@ -77,7 +74,7 @@ func spider(sp *Spider) {
 		if sp.ProxyIs {
 			proxyUrl, parseErr := url.Parse("http://" + conf.Proxy.Host + ":" + conf.Proxy.Port)
 			if parseErr != nil {
-				log.Println("代理地址错误: \n" + parseErr.Error())
+				mainErrorLogger.Println("代理地址错误: \n" + parseErr.Error())
 				continue
 			}
 			tr.Proxy = http.ProxyURL(proxyUrl)
@@ -122,65 +119,74 @@ func spider(sp *Spider) {
 		ch2 <- 1
 		go Verify(&pis[i], &wg, ch2, true)
 	}
-	wg.Wait()
-
 }
 
 func spiderPlugin(spp *SpiderPlugin) {
 	defer func() {
 		wg2.Done()
 	}()
-	cmd := exec.Command("cmd.exe", "/c", spp.Run)
-	//Start执行不会等待命令完成，Run会阻塞等待命令完成。
-	//err := cmd.Start()
-	//err := cmd.Run()
-	//cmd.Output()函数的功能是运行命令并返回其标准输出。
-	buf, err := cmd.Output()
-	var pis []ProxyIp
+	cmd := exec.Command(spp.Run)
+
+	// 获取命令的标准输出管道
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		log.Println("失败", spp.Name, err)
-	} else {
+		logError("插件 %s 执行失败: %v", spp.Name, err)
+		return
+	}
+
+	// 启动命令
+	if err := cmd.Start(); err != nil {
+		logError("插件 %s 启动失败: %v", spp.Name, err)
+		return
+	}
+
+	// 读取输出
+	output, err := io.ReadAll(stdout)
+	if err != nil {
+		logError("插件 %s 读取输出失败: %v", spp.Name, err)
+		return
+	}
+
+	// 等待命令完成
+	if err := cmd.Wait(); err != nil {
+		logError("插件 %s 执行过程中出错: %v", spp.Name, err)
+		return
+	}
+
+	// 处理输出
+	var pis []ProxyIp
+	lines := strings.Split(string(output), ",")
+	for _, line := range lines {
+		if line == "" {
+			continue
+		}
+
+		split := strings.Split(strings.TrimSpace(line), ":")
+		if len(split) != 2 {
+			continue
+		}
+
 		_is := true
-		line := strings.Split(string(buf), ",")
-		for i := range line {
-			split := strings.Split(line[i], ":")
-			for pi := range ProxyPool {
-				if ProxyPool[pi].Ip == split[0] && ProxyPool[pi].Port == split[1] {
-					_is = false
-					break
-				}
-			}
-			if _is {
-				pis = append(pis, ProxyIp{Ip: split[0], Port: split[1], Source: spp.Name})
+		for pi := range ProxyPool {
+			if ProxyPool[pi].Ip == split[0] && ProxyPool[pi].Port == split[1] {
+				_is = false
+				break
 			}
 		}
-		//var _pis []ProxyIp
-		//var pis []ProxyIp
-		//var _is = true
-		//err = json.Unmarshal(buf, &_pis)
-		//if err != nil {
-		//	log.Printf("%s 返回值不符合规范\n", spp.Name)
-		//	return
-		//}
-		//for i := range _pis {
-		//	for pi := range ProxyPool {
-		//		if ProxyPool[pi].Ip == _pis[i].Ip && ProxyPool[pi].Port == _pis[i].Port {
-		//			_is = false
-		//			break
-		//		}
-		//	}
-		//	if _is {
-		//		pis = append(pis, ProxyIp{Ip: _pis[i].Ip, Port: _pis[i].Port, Source: spp.Name})
-		//	}
+
+		if _is {
+			pis = append(pis, ProxyIp{Ip: split[0], Port: split[1], Source: spp.Name})
+		}
 	}
+
 	pis = uniquePI(pis)
 	countAdd(len(pis))
+
 	for i := range pis {
 		wg.Add(1)
 		ch2 <- 1
 		go Verify(&pis[i], &wg, ch2, true)
 	}
-	wg.Wait()
 }
 
 func spiderFile(spp *SpiderFile) {
@@ -190,7 +196,7 @@ func spiderFile(spp *SpiderFile) {
 	var pis []ProxyIp
 	fi, err := os.Open(spp.Path)
 	if err != nil {
-		log.Println(spp.Name, "失败", err)
+		logError("文件 %s 打开失败: %v", spp.Name, err)
 		return
 	}
 	r := bufio.NewReader(fi) // 创建 Reader
@@ -221,5 +227,4 @@ func spiderFile(spp *SpiderFile) {
 		go Verify(&pis[i], &wg, ch2, true)
 	}
 	wg.Wait()
-
 }
